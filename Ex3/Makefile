@@ -22,13 +22,7 @@ LIB = /home/elioz/Operating\ Systems/Ex2/libpoisson.so
 # Default rule to build the target
 all: $(TARGET)
 
-# Rule to build the target executable
-# $(CXX): The compiler (clang++)
-# $(CXXFLAGS): The compilation flags
-# -o $(TARGET): The output file (target executable)
-# $(SRC): The source file
-# -L/path/to/lib: Add directory to the library search path
-# -l:libpoisson.so: Link with the shared library
+
 # $(LDFLAGS): The linker flags
 $(TARGET): $(SRC) $(LIB)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -L/home/elioz/Operating\ Systems/Ex2 -l:libpoisson.so $(LDFLAGS)
