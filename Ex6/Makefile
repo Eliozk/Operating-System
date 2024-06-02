@@ -31,13 +31,23 @@ findPhone.o: findPhone.cpp
 clean:
 	rm -f $(OBJS) $(TARGETS)
 
-# Run target to execute both programs with example arguments
-run: all
-	./add2PB
-	./findPhone "Elioz Kolani"
+# Run target to execute both programs with user input
+add: all
+	@echo "Enter Name:"
+	@read NAME; \
+	echo "Enter Last Name:"; \
+	read LAST_NAME; \
+	echo "Enter Phone Number:"; \
+	read PHONE_NUMBER; \
+	./add2PB "$$NAME" "$$LAST_NAME" "$$PHONE_NUMBER"; \
+	echo "Enter the name to find the phone number:"; \
+	read FIND_NAME; \
+	./findPhone "$$FIND_NAME"
 
-# Target to execute findPhone
+# Find target to execute the findPhone program
 find: all
-	./findPhone
+	@echo "Enter name to find the phone number:"
+	@read FIND_NAME; \
+	./findPhone "$$FIND_NAME"
 
 .PHONY: all clean run find

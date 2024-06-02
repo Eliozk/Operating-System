@@ -39,17 +39,17 @@ int main(int argc, char **argv) {
     }
 
     if (pid1 == 0) {
-        // Child process 1: Run 'grep'
-        close(pipefd[0]);            // Close unused read end
-        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to write end of pipe
-        close(pipefd[1]);            // Close write end after redirecting
+        // Child process 1: Run 'grep' to search for the specific name
+        close(pipefd[0]);            // Close unused read end of the first pipe
+        dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to the write end of the first pipe
+        close(pipefd[1]);            // Close the write end of the first pipe after redirecting
 
         execlp("grep", "grep", name, "phonebook.txt", (char *)NULL);
-        perror("execlp grep");
+        perror("execlp grep");       // If execlp fails, print error
         exit(EXIT_FAILURE);
     }
 
-    close(pipefd[1]); // Close write end of the first pipe in parent
+    close(pipefd[1]); // Close the write end of the first pipe in parent
 
     // Fork the second child process to run 'sed s/ /#/g'
     pid_t pid2 = fork();
@@ -59,20 +59,20 @@ int main(int argc, char **argv) {
     }
 
     if (pid2 == 0) {
-        // Child process 2: Run 'sed s/ /#/g'
-        close(pipefd2[0]);             // Close unused read end
-        dup2(pipefd[0], STDIN_FILENO); // Redirect stdin to read end of the first pipe
-        dup2(pipefd2[1], STDOUT_FILENO); // Redirect stdout to write end of the second pipe
-        close(pipefd[0]);              // Close read end of the first pipe after redirecting
-        close(pipefd2[1]);             // Close write end of the second pipe after redirecting
+        // Child process 2: Run 'sed s/ /#/g' to replace spaces with '#'
+        close(pipefd2[0]);             // Close unused read end of the second pipe
+        dup2(pipefd[0], STDIN_FILENO); // Redirect stdin to the read end of the first pipe
+        dup2(pipefd2[1], STDOUT_FILENO); // Redirect stdout to the write end of the second pipe
+        close(pipefd[0]);              // Close the read end of the first pipe after redirecting
+        close(pipefd2[1]);             // Close the write end of the second pipe after redirecting
 
         execlp("sed", "sed", "s/ /#/g", (char *)NULL);
-        perror("execlp sed");
+        perror("execlp sed");          // If execlp fails, print error
         exit(EXIT_FAILURE);
     }
 
-    close(pipefd[0]);  // Close read end of the first pipe in parent
-    close(pipefd2[1]); // Close write end of the second pipe in parent
+    close(pipefd[0]);  // Close the read end of the first pipe in parent
+    close(pipefd2[1]); // Close the write end of the second pipe in parent
 
     // Fork the third child process to run 'sed s/,/ /'
     pid_t pid3 = fork();
@@ -82,20 +82,20 @@ int main(int argc, char **argv) {
     }
 
     if (pid3 == 0) {
-        // Child process 3: Run 'sed s/,/ /'
-        close(pipefd3[0]);             // Close unused read end
-        dup2(pipefd2[0], STDIN_FILENO); // Redirect stdin to read end of the second pipe
-        dup2(pipefd3[1], STDOUT_FILENO); // Redirect stdout to write end of the third pipe
-        close(pipefd2[0]);             // Close read end of the second pipe after redirecting
-        close(pipefd3[1]);             // Close write end of the third pipe after redirecting
+        // Child process 3: Run 'sed s/,/ /' to replace commas with spaces
+        close(pipefd3[0]);             // Close unused read end of the third pipe
+        dup2(pipefd2[0], STDIN_FILENO); // Redirect stdin to the read end of the second pipe
+        dup2(pipefd3[1], STDOUT_FILENO); // Redirect stdout to the write end of the third pipe
+        close(pipefd2[0]);             // Close the read end of the second pipe after redirecting
+        close(pipefd3[1]);             // Close the write end of the third pipe after redirecting
 
         execlp("sed", "sed", "s/,/ /", (char *)NULL);
-        perror("execlp sed");
+        perror("execlp sed");          // If execlp fails, print error
         exit(EXIT_FAILURE);
     }
 
-    close(pipefd2[0]); // Close read end of the second pipe in parent
-    close(pipefd3[1]); // Close write end of the third pipe in parent
+    close(pipefd2[0]); // Close the read end of the second pipe in parent
+    close(pipefd3[1]); // Close the write end of the third pipe in parent
 
     // Fork the fourth child process to run 'awk {print $2}'
     pid_t pid4 = fork();
@@ -105,16 +105,16 @@ int main(int argc, char **argv) {
     }
 
     if (pid4 == 0) {
-        // Child process 4: Run 'awk {print $2}'
-        dup2(pipefd3[0], STDIN_FILENO); // Redirect stdin to read end of the third pipe
-        close(pipefd3[0]);              // Close read end of the third pipe after redirecting
+        // Child process 4: Run 'awk {print $2}' to print the second field
+        dup2(pipefd3[0], STDIN_FILENO); // Redirect stdin to the read end of the third pipe
+        close(pipefd3[0]);              // Close the read end of the third pipe after redirecting
 
         execlp("awk", "awk", "{print $2}", (char *)NULL);
-        perror("execlp awk");
+        perror("execlp awk");           // If execlp fails, print error
         exit(EXIT_FAILURE);
     }
 
-    close(pipefd3[0]); // Close read end of the third pipe in parent
+    close(pipefd3[0]); // Close the read end of the third pipe in parent
 
     // Wait for all child processes to finish
     int status;
