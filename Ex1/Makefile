@@ -1,41 +1,34 @@
-CC = clang++
-CFLAGS = -Wall -Wextra -std=c++11 -g --coverage
-OBJ_DIR = objectFiles
-TARGET = main_infinityRecursion main_divideInZero main_nullPointer
+CC = g++
+Flags = -Wall -g -Wextra
 
-all: $(addprefix $(OBJ_DIR)/,$(TARGET))
+all: file1 file2 file3
 
-$(OBJ_DIR)/main_%: $(OBJ_DIR)/%.o | $(OBJ_DIR)
-	$(CC) $(CFLAGS) $< -o $@
+file1: divideInZero.cpp
+	$(CC) $(Flags) -o file1 divideInZero.cpp
 
-$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+file2: infinityRecursion.cpp
+	$(CC) $(Flags) -o file2 infinityRecursion.cpp
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+file3: nullPointer.cpp
+	$(CC) $(Flags) -o file3 nullPointer.cpp
 
-run1: $(OBJ_DIR)/main_infinityRecursion
-	./$<
+.PHONY: run1 run2 run3 debug1 debug2 debug3 clean all
+run1: file1
+	./file1
 
-run2: $(OBJ_DIR)/main_divideInZero
-	./$<
+run2: file2
+	./file2
 
-run3: $(OBJ_DIR)/main_nullPointer
-	./$<
+run3: file3
+	./file3
 
-core: core_infinityRecursion core_divideInZero core_nullPointer
 
-core_%: $(OBJ_DIR)/main_%
-	ulimit -c unlimited && ./$<
-
-debug_core: core
-	gdb $(OBJ_DIR)/main_$(PROGRAM) core
-
-coverage: all
-	./$(TARGET)
-	gcov $(addsuffix .cpp,$(TARGET))
+debug1: file1 
+	ddd ./file1 &
+debug2: file2 
+	ddd ./file2 &
+debug3:
+	ddd ./file3 &
 
 clean:
-	rm -rf $(OBJ_DIR) *.gcov *.gcda *.gcno $(TARGET) core
-
-.PHONY: all clean run1 run2 run3 core debug_core coverage
+	rm -f file1 file2 file3
