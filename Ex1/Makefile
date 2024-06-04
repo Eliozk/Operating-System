@@ -1,34 +1,17 @@
-CC = g++
-Flags = -Wall -g -Wextra
+# List of programs
+PROGRAMS = Q1 Q2 Q3 Q4 Q5 Q6
 
-all: file1 file2 file3
+# Build all programs
+all: $(PROGRAMS)
 
-file1: divideInZero.cpp
-	$(CC) $(Flags) -o file1 divideInZero.cpp
+# Pattern rule for building each program
+$(PROGRAMS):
+	$(MAKE) -C $@ all
 
-file2: infinityRecursion.cpp
-	$(CC) $(Flags) -o file2 infinityRecursion.cpp
-
-file3: nullPointer.cpp
-	$(CC) $(Flags) -o file3 nullPointer.cpp
-
-.PHONY: run1 run2 run3 debug1 debug2 debug3 clean all
-run1: file1
-	./file1
-
-run2: file2
-	./file2
-
-run3: file3
-	./file3
-
-
-debug1: file1 
-	ddd ./file1 &
-debug2: file2 
-	ddd ./file2 &
-debug3:
-	ddd ./file3 &
-
+# Clean all programs
 clean:
-	rm -f file1 file2 file3
+	@for dir in $(PROGRAMS); do \
+		$(MAKE) -C $$dir clean; \
+	done
+
+.PHONY: all clean $(PROGRAMS)

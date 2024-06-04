@@ -17,20 +17,20 @@ TARGET = poisson
 SRC = main.cpp
 
 # Define the path to the shared library
-LIB = /home/elioz/Operating\ Systems/Ex2/libpoisson.so
+LIB_PATH = /home/elioz/Operating\ Systems/Ex1/Q2
+LIB = $(LIB_PATH)/libpoisson.so
 
 # Default rule to build the target
 all: $(TARGET)
 
-
 # $(LDFLAGS): The linker flags
 $(TARGET): $(SRC) $(LIB)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -L/home/elioz/Operating\ Systems/Ex2 -l:libpoisson.so $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -L$(LIB_PATH) -l:libpoisson.so $(LDFLAGS)
 
 # Rule to run the program
 # LD_LIBRARY_PATH: Specify the library path for runtime
 run: $(TARGET)
-	LD_LIBRARY_PATH=/home/elioz/Operating\ Systems/Ex2 ./$(TARGET)
+	LD_LIBRARY_PATH=$(LIB_PATH) ./$(TARGET)
 
 # Rule to clean up generated files
 clean:
