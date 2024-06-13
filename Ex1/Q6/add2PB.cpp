@@ -38,3 +38,5 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+//to check phone book run "cat phonebook.txt"

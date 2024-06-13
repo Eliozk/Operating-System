@@ -22,13 +22,14 @@ $(LIB): $(SRC)
 
 # תוכנית המשתמשת בספריה ומחשבת התפלגות poisson עבור 5 ערכים
 run: $(TARGET)
-	./$(TARGET) 1 1
+	./$(TARGET) 2 1
+	./$(TARGET) 2 10
 	./$(TARGET) 2 2
-	./$(TARGET) 10 2
-	./$(TARGET) 3 2
-	./$(TARGET) 4 3
+	./$(TARGET) 3 3
+	./$(TARGET) 100 3
 
 # Replace 3.5 and 2 with your desired lambda and k values
 # כלל לניקוי קבצים שנוצרו (במקרה הזה קובץ ההרצה TARGET)
 clean:
 	rm -f $(TARGET) $(LIB)
+# to run manually to calculate ./poisson lambda(num) k(second num) "./poisson 2 1"

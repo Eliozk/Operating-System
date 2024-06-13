@@ -37,7 +37,7 @@ int maxSubArraySumN3(int arr[], int n);
 int main() {
     int seed, n;
 
-    cout << "Enter random seed: ";
+    cout << "Enter random seed: ";//same seed will give same random array help in check of running time
     cin >> seed;
 
     cout << "Enter size of the array: ";

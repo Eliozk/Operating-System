@@ -25,7 +25,7 @@ all: $(TARGET)
 
 # $(LDFLAGS): The linker flags
 $(TARGET): $(SRC) $(LIB)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -L$(LIB_PATH) -l:libpoisson.so $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) -L$(LIB_PATH) -lpoisson $(LDFLAGS)
 
 # Rule to run the program
 # LD_LIBRARY_PATH: Specify the library path for runtime

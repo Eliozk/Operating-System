@@ -13,11 +13,11 @@ void Erry(const char *prog_name) {
 int main(int argc, char **argv) {
     const char *name;
 
-    // Check if the program received the correct number of arguments
+    // Check if the program received the correct number of arguments name of prog and name
     if (argc != 2) {
         // Prompt the user to enter a name if not provided as an argument
         char inputName[100];
-        std::cout << "Enter Name: ";
+        std::cout << "Enter Name: not running  ";
         std::cin.getline(inputName, sizeof(inputName));
         name = inputName;
     } else {
@@ -25,6 +25,9 @@ int main(int argc, char **argv) {
     }
 
     // Create three pipes for inter-process communication
+    //pipe1- search by name
+    //pipe2- change space to #
+    //pipe3 - change "," to space
     int pipefd[2], pipefd2[2], pipefd3[2];
     if (pipe(pipefd) == -1 || pipe(pipefd2) == -1 || pipe(pipefd3) == -1) {
         perror("pipe");
@@ -122,3 +125,11 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
+
+// 1. תהליך ראשון יוצר את פקודת ה-Grep על מנת לחפש את השם המבוקש בקובץ.
+// 2. תהליך שני משתמש ב-Sed כדי לשנות רווחים לתו "#" בשורות שנמצאו על ידי ה-Grep.
+// 3. תהליך שלישי משתמש גם ב-Sed כדי להחליף פסיקים ברווחים.
+// 4. תהליך רביעי משתמש ב-Awk כדי להציג את השדה השני בכל שורה, שהוא המספר הטלפון.
+//
+// לסיום, התוכנית מחכה לסיום כל התהליכים הילדים ומציגה את התוצאה הסופית בפלט.

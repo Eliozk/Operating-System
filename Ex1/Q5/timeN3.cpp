@@ -16,3 +16,4 @@ int maxSubArraySumN3(int arr[], int n) {
     }
     return maxSum;
 }
+//init i and j to run twice o(n2) then one more for n3 run time

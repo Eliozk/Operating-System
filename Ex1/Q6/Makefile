@@ -51,3 +51,5 @@ find: all
 	./findPhone "$$FIND_NAME"
 
 .PHONY: all clean run find
+#to find phone run  ./findPhone "name" or make find
+#to add - "make add" or  example: "./add2PB moshe ariel 0538049795"

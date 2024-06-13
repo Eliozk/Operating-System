@@ -33,7 +33,7 @@ gcov: all
 	./test.sh
 	./$(TARGET)  # Run dijkstra manually after tests and coverage
 	gcov $(SRCS)
-
+#for better coverage you run fails runs then manually enter adjancy matrix (01)(10) then enter num to end gcov calc
 # Rule to run the program
 run: all
 	./$(TARGET)
