@@ -1,6 +1,8 @@
 # Overview
 
-This project includes two programs, ttt and mync, which can be compiled and run using the provided Makefile. The mync program can be run in various modes, using either TCP or UDP protocols, and includes instructions for using Unix domain sockets.
+This project includes three programs: `ttt`, `mync`, and `mynec`, which can be compiled and run using the provided Makefile. The `mync` program can be run in various modes, using either TCP or UDP protocols, and includes instructions for using Unix domain sockets. The `mynec` program plays the role of both server and client, facilitating communication between the two.
+
+The `ttt` program is a simple Tic-Tac-Toe game.
 
 ## Compilation
 
