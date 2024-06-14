@@ -1,5 +1,5 @@
 # List of programs
-PROGRAMS = Q1 Q2 Q3 Q4 Q5 Q6
+PROGRAMS = Q1 Q2AndQ3 Q4 Q5 Q6
 
 # Build all programs
 all: $(PROGRAMS)
