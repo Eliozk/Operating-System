@@ -11,6 +11,7 @@ private:
     std::vector<std::vector<int>> adj; // adjacency matrix
 
 public:
+    Graph();
     Graph(int n); // Constructor
     void addEdge(int u, int v);
     void removeEdge(int u, int v);

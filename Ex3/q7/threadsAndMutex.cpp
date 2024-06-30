@@ -110,7 +110,6 @@ public:
 };
 
 std::mutex graphMutex;
-
 std::mutex threadCountMutex;
 //main is one thread and every added client we will add one. n+1 threads for n clients.
 int threadCount = 1;
@@ -119,108 +118,104 @@ void handleClientCommands(int clientSocket, Graph& graph) {
     {
         std::lock_guard<std::mutex> lock(threadCountMutex);
         ++threadCount;
-        cout << "Thread created for client.\nTotal thread count: " << threadCount <<"\nClients amount connected to server: " << threadCount-1<< endl;
+        cout << "Thread created for client.\nTotal thread count: " << threadCount << "\nClients amount connected to server: " << threadCount - 1 << endl;
     }
 
     char buffer[1024] = {0};
-    int valread = read(clientSocket, buffer, 1024);
-    if (valread <= 0) {
-        if (valread == 0) {
-            cout << "Client disconnected." << endl;
-        } else {
-            perror("recv");
-        }
-        close(clientSocket);
-        {
-            std::lock_guard<std::mutex> lock(threadCountMutex);
-            --threadCount;
-            cout << "Thread closed for client. Total current thread count: " << threadCount << endl;
-        }
-        return;
-    }
-
-    stringstream ss(buffer);
-    string command;
-    ss >> command;
-
-    if (command == "Newgraph") {
-        int n, m;
-        ss >> n >> m;
-
-        // Lock graph for Mutex
-        std::lock_guard<std::mutex> lock(graphMutex);
-
-        graph = Graph(n); // Reinitialize graph
-
-        for (int i = 0; i < m; ++i) {
-            memset(buffer, 0, sizeof(buffer));
-            valread = read(clientSocket, buffer, 1024);
+    while (true) {
+        int valread = read(clientSocket, buffer, 1024);
+        if (valread <= 0) {
             if (valread == 0) {
-                cout << "Client disconnected while sending graph edges." << endl;
-                close(clientSocket);
-                {
-                    std::lock_guard<std::mutex> lock(threadCountMutex);
-                    --threadCount;
-                    cout << "Thread closed for client. Current thread count: " << threadCount << endl;
+                cout << "Client disconnected." << endl;
+            } else {
+                perror("recv");
+            }
+            close(clientSocket);
+            {
+                std::lock_guard<std::mutex> lock(threadCountMutex);
+                --threadCount;
+                cout << "Thread closed for client. Total current thread count: " << threadCount << endl;
+            }
+            return;
+        }
+
+        stringstream ss(buffer);
+        string command;
+        ss >> command;
+
+        if (command == "Newgraph") {
+            int n, m;
+            ss >> n >> m;
+
+            // Lock graph for Mutex
+            std::lock_guard<std::mutex> lock(graphMutex);
+
+            graph = Graph(n); // Reinitialize graph
+
+            for (int i = 0; i < m; ++i) {
+                memset(buffer, 0, sizeof(buffer));
+                valread = read(clientSocket, buffer, 1024);
+                if (valread == 0) {
+                    cout << "Client disconnected while sending graph edges." << endl;
+                    close(clientSocket);
+                    {
+                        std::lock_guard<std::mutex> lock(threadCountMutex);
+                        --threadCount;
+                        cout << "Thread closed for client. Current thread count: " << threadCount << endl;
+                    }
+                    return;
                 }
-                return;
+                stringstream edgeStream(buffer);
+                int u, v;
+                edgeStream >> u >> v;
+                graph.addEdge(u, v);
             }
-            stringstream edgeStream(buffer);
-            int u, v;
-            edgeStream >> u >> v;
-            graph.addEdge(u, v);
-        }
-    } else if (command == "Kosaraju") {
-        // Lock graph for reading
-        std::lock_guard<std::mutex> lock(graphMutex);
+        } else if (command == "Kosaraju") {
+            // Lock graph for reading
+            std::lock_guard<std::mutex> lock(graphMutex);
 
-        vector<vector<int>> sccs = graph.kosaraju();
+            vector<vector<int>> sccs = graph.kosaraju();
 
-        stringstream response;
-        response << "Kosaraju command executed.\nThe SCC's are:\n";
-        for (const auto& scc : sccs) {
-            for (int node : scc) {
-                response << node << " ";
+            stringstream response;
+            response << "Kosaraju command executed.\nThe SCC's are:\n";
+            for (const auto& scc : sccs) {
+                for (int node : scc) {
+                    response << node << " ";
+                }
+                response << endl; // Print each SCC on a new line
             }
-            response << endl; // Print each SCC on a new line
+            send(clientSocket, response.str().c_str(), response.str().length(), 0);
+        } else if (command == "Newedge") {
+            int i, j;
+            ss >> i >> j;
+            cout << "Newedge command: adding edge " << i << " -> " << j << endl;
+
+            // Lock graph for modification
+            std::lock_guard<std::mutex> lock(graphMutex);
+
+            graph.addEdge(i, j);
+            send(clientSocket, "Newedge command executed successfully.\n", strlen("Newedge command executed successfully.\n"), 0);
+        } else if (command == "Removeedge") {
+            int i, j;
+            ss >> i >> j;
+            cout << "Removeedge command: Removing edge " << i << " -> " << j << endl;
+
+            // Lock graph for modification
+            std::lock_guard<std::mutex> lock(graphMutex);
+
+            graph.removeEdge(i, j);
+            send(clientSocket, "Removeedge command executed successfully.\n", strlen("Removeedge command executed successfully.\n"), 0);
+        } else {
+            // Handle invalid command or end of input
+            send(clientSocket, "Invalid command.\n", strlen("Invalid command.\n"), 0);
         }
-        send(clientSocket, response.str().c_str(), response.str().length(), 0);
-    } else if (command == "Newedge") {
-        int i, j;
-        ss >> i >> j;
-        cout << "Newedge command: adding edge " << i << " -> " << j << endl;
 
-        // Lock graph for modification
-        std::lock_guard<std::mutex> lock(graphMutex);
-
-        graph.addEdge(i, j);
-        send(clientSocket, "Newedge command executed successfully.\n", strlen("Newedge command executed successfully.\n"), 0);
-    } else if (command == "Removeedge") {
-        int i, j;
-        ss >> i >> j;
-        cout << "Removeedge command: Removing edge " << i << " -> " << j << endl;
-
-        // Lock graph for modification
-        std::lock_guard<std::mutex> lock(graphMutex);
-
-        graph.removeEdge(i, j);
-        send(clientSocket, "Removeedge command executed successfully.\n", strlen("Removeedge command executed successfully.\n"), 0);
-    } else {
-        // Handle invalid command or end of input
-        send(clientSocket, "Invalid command.\n", strlen("Invalid command.\n"), 0);
-    }
-
-    // Debug print current state of the graph
-    {
-        std::lock_guard<std::mutex> lock(graphMutex);
-        graph.printGraph(); // Make sure you have a printGraph() method to visualize the graph state
-    }
-    cout << endl; // Add extra line for clarity
-    close(clientSocket);
-    {
-        std::lock_guard<std::mutex> lock(threadCountMutex);
-        --threadCount;
-        cout << "Thread closed for client. Current thread count: " << threadCount << endl;
+        // Debug print current state of the graph
+        {
+            std::lock_guard<std::mutex> lock(graphMutex);
+            graph.printGraph(); // Make sure you have a printGraph() method to visualize the graph state
+        }
+        cout << endl; // Add extra line for clarity
     }
 }
 
@@ -266,14 +261,12 @@ int main() {
     while (true) {
         int clientSocket;
         //this line gets clients connections
-        if ((clientSocket = accept(serverSocket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+        if ((clientSocket = accept(serverSocket, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
             perror("accept");
             exit(EXIT_FAILURE);
         }
 
-        cout << "New connection, socket fd is " << clientSocket << ", ip is : " << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << endl;
-
-        // Create a new thread to handle the client
+        // Create a new thread to handle client commands
         std::thread(clientHandler, clientSocket, std::ref(graph)).detach();
     }
 

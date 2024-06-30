@@ -1,17 +1,19 @@
-#include "reactor.hpp"
-#include "Graph.hpp" // Include the header file for your Graph class
+#include "proactor.hpp"
+#include "Graph.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <mutex> // Include mutex for thread safety
+
+Graph graph; // Global graph instance
+
+std::mutex graphMutex; // Mutex to protect graph modifications
 
 // Function to handle client communication asynchronously
 void* proactorFunc(void* sockfdPtr) {
     int clientSocket = *((int*)sockfdPtr);
     std::cout << "[Proactor] Handling client on socket fd " << clientSocket << std::endl;
-
-    // Create a Graph instance for the client's operations
-    Graph graph(0); // Adjust as per your graph initialization needs
 
     Reactor reactor; // Create an instance of Reactor to manage file descriptors
 

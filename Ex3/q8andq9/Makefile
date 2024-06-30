@@ -5,16 +5,16 @@ CXXFLAGS = -std=c++11 -Wall -Wextra -pthread   # Added -pthread for pthread libr
 all: main
 
 # Link object files to create the main executable
-main: main.o reactor.o Graph.o
-	$(CXX) $(CXXFLAGS) -o main main.o reactor.o Graph.o
+main: main.o proactor.o Graph.o
+	$(CXX) $(CXXFLAGS) -o main main.o proactor.o Graph.o
 
 # Compile main.cpp to main.o
-main.o: main.cpp reactor.hpp
+main.o: main.cpp proactor.hpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-# Compile reactor.cpp to reactor.o
-reactor.o: reactor.cpp reactor.hpp
-	$(CXX) $(CXXFLAGS) -c reactor.cpp
+# Compile proactor.cpp to proactor.o
+proactor.o: proactor.cpp proactor.hpp
+	$(CXX) $(CXXFLAGS) -c proactor.cpp
 
 # Compile Graph.cpp to Graph.o
 Graph.o: Graph.cpp Graph.hpp
@@ -23,3 +23,6 @@ Graph.o: Graph.cpp Graph.hpp
 # Clean target to remove generated files
 clean:
 	rm -f main *.o
+
+#how to kill port
+#sudo ss -tuln | grep 9034

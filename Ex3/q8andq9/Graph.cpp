@@ -1,5 +1,6 @@
 #include "Graph.hpp"
 
+Graph::Graph(){}
 Graph::Graph(int n) {
     this->n = n;
     adj.assign(n + 1, std::vector<int>(n + 1, 0)); // Initialize adjacency matrix with size (n+1)x(n+1)
@@ -11,9 +12,14 @@ void Graph::addEdge(int u, int v) {
 }
 
 void Graph::removeEdge(int u, int v) {
-    adj[u][v] = 0;
-    std::cout << "Removed the edge between " << u << " and " << v << std::endl;
+    if (u >= 1 && u <= n && v >= 1 && v <= n) { // Ensure indices are within bounds
+        adj[u][v] = 0;
+        std::cout << "Removed the edge between " << u << " and " << v << std::endl;
+    } else {
+        std::cerr << "Invalid indices for removeEdge: " << u << ", " << v << std::endl;
+    }
 }
+
 
 void Graph::printGraph() const {
     std::cout << "Current Graph:" << std::endl;
