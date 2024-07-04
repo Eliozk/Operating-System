@@ -1,0 +1,71 @@
+#  Kosaraju's Algorithm Project
+
+## Description
+This project implements Kosaraju's algorithm in C++ for finding strongly connected components (SCCs) in a directed graph. Kosaraju's algorithm efficiently determines SCCs by performing two depth-first searches (DFS) on the graph.
+
+## Running the Code
+
+### General Commands
+- **Newgraph 5 5**: Creates a new graph with 5 vertices and 5 edges.
+- **1 2**: Adds an edge from vertex 1 to vertex 2.(can be different numbers - inside the range of vertices amount represented by 2D adjacency matrix)
+- **Kosaraju**: Runs Kosaraju's algorithm to find and print the SCCs of the current graph.
+- **Newedge 2 5**: Adds a new edge from vertex 2 to vertex 5.
+- **Removeedge 2 5**: Removes the edge from vertex 2 to vertex 5.
+` The numbers can be as your choice. make sure the input is in the range of the adjancy matrix.`
+
+### Exercise-specific Instructions
+
+#### Question 1: (exe1)
+After compiling with `make`:
+
+To run the code: `./q1`
+Then, input the number of vertices `n` and number of edges `m` in the graph.
+The program will print the SCCs of the graph using Kosaraju's algorithm.
+
+#### Question 2: (exe2)
+After compiling with `make`:
+
+To measure running time, run: `./<executable file name> < input.txt`
+`input.txt` contain a pre-made graph with 30,000 vertices.
+
+#### Question 3: (exe3)
+After compiling with `make`:
+
+To run: `./main`
+Then enter commands as specified in `input.txt`.
+
+#### Question 4: (exe4)
+After compiling with `make`:
+
+To run: `./main`
+Then enter commands as specified in `input.txt`.
+
+#### Question 5: (exe4)
+After compiling with `make`:
+
+To run: `./main`
+
+#### Question 6: (exe4)
+After compiling with `make`:
+
+To run: `./server`
+
+#### Question 7: (exe4)
+After compiling with `make`:
+
+To run: `./main`
+
+#### Questions 8 & 9: (exe4)
+After compiling with `make`:
+
+To run: `./main`
+
+#### Question 10: (exe4)
+After compiling with `make`:
+
+To run: `./main`
+
+Each question focuses on different aspects and variations of running Kosaraju's algorithm or related tasks.
+
+## Resources
+For a deeper understanding of Kosaraju's algorithm and its applications, you can refer to the [Wikipedia page on Kosaraju's algorithm](https://en.wikipedia.org/wiki/Kosaraju's_algorithm).

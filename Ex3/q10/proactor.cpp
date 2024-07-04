@@ -129,10 +129,8 @@ void proactor::printThread()
         if (mostGraphConnected)
         {
             std::cout << "\nAt least 50% of the graph belongs to the same SCC\n"<<endl;
-            wasMajority = true;
             mostGraphConnected = false;
         }
-       
     }
 }
 
@@ -171,7 +169,6 @@ void proactor::handleClient(int clientSocket, Graph &graph)
                 std::lock_guard<std::mutex> lock2(conditionMutex);
                 mostGraphConnected = true;
                 notLongerMajority = false;
-                wasMajority = false;
 
                 // Read edges and update the graph
                 for (int i = 0; i < m; ++i)
@@ -212,8 +209,13 @@ void proactor::handleClient(int clientSocket, Graph &graph)
                 }
 
                 // Determine if it's more than 50% of the graph
+                cout<<"\n debug max size? "<< maxSize<< " graph.getnumvertices?: "<< graph.getNumVertices()<<endl;
+                cout<< "3\2 = "<<3/2 << endl;
+
                 mostGraphConnected = (maxSize >= graph.getNumVertices() / 2);
                 notLongerMajority = !mostGraphConnected;
+                cout<<"\nDebug most graph? "<< mostGraphConnected<< " and not longer majority: "<< notLongerMajority<<endl;
+
                  // Notify the print thread
                 {
                     std::lock_guard<std::mutex> lock(conditionMutex);
@@ -221,17 +223,16 @@ void proactor::handleClient(int clientSocket, Graph &graph)
                 }
                 // only if mostGraphConnected
                 if(mostGraphConnected){
-                     //   Starts a new thread (printThread) asynchronously to perform additional tasks such as printing.
+                     //Starts a new thread (printThread) asynchronously to perform printing.
                     std::thread printThread(&proactor::printThread, this);
                     printThread.detach(); // Detach the thread to run asynchronously
                 }
 
-                // Update wasMajority based on current conditions
-                if (notLongerMajority && wasMajority)
+                // if not most graph connected print to stdout 
+                if (notLongerMajority)
                 {
                     std::lock_guard<std::mutex> lock(conditionMutex);
                     std::cout << "\nAt least 50% of the graph NO LONGER belongs to the same SCC\n";
-                    wasMajority = false;
                     notLongerMajority = false;
                 }
                 
@@ -308,11 +309,6 @@ void proactor::handleClient(int clientSocket, Graph &graph)
                 // Handle invalid command or end of input
                 send(clientSocket, "Invalid command.\n", strlen("Invalid command.\n"), 0);
             }
-        // else
-        // {
-        //     std::cerr << "[Server] Error: No data read from client, closing connection" << std::endl;
-        //     close(clientSocket);
-        //     return;
-        // }
+       
     }
 }

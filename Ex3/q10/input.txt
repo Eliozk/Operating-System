@@ -8,4 +8,7 @@ Kosaraju
 Newedge 2 5
 Removeedge 2 5
 
- 
+Newgraph
+ 1 2
+ 1 3
+ 3 1

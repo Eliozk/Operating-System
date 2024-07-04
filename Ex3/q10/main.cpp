@@ -14,7 +14,7 @@ std::mutex conditionMutex;
 std::condition_variable cond;
 bool mostGraphConnected = false;
 bool notLongerMajority = false;
-bool wasMajority = false;
+
 
 // Function to handle client communication asynchronously
 void* proactorFunc(void* sockfdPtr) {
